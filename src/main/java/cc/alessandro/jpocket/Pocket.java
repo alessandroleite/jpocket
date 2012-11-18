@@ -5,12 +5,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.http.annotation.NotThreadSafe;
 
 import cc.alessandro.jpocket.auth.AccessToken;
 import cc.alessandro.jpocket.auth.RequestToken;
 import cc.alessandro.jpocket.exception.PocketException;
+import cc.alessandro.jpocket.filters.Parameter;
 import cc.alessandro.jpocket.session.Request;
 import cc.alessandro.jpocket.session.Request.ParamType;
 import cc.alessandro.jpocket.session.Response;
@@ -69,6 +71,18 @@ public class Pocket {
 	void add(String url, String title) 
 	{
 		assertThatIsLinked();
+	}
+	
+	public List<Status> get(Parameter filter) throws IOException {
+		assertThatIsLinked();
+		
+		Request request = new Request("/get", session);
+		if (filter != null) {
+			request.addParams(filter.asType());
+		}
+		
+		Response response = new RestUtility().execute(request);
+		return StatusFactory.parser(response);
 	}
 
 	private void assertThatIsLinked() {

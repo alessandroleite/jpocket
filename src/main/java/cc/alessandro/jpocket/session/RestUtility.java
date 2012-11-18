@@ -86,7 +86,10 @@ public class RestUtility {
 		final HttpPost post = this.createHttpRequest(request);
 		HttpResponse response =  request.getSession().getHttpClient().execute(post);
 		String json = asString(response);
-		return this.parserJSON(json);
+		
+		Response resp = this.parserJSON(json);
+		resp.setJson(json);
+		return resp;
 	}
 
 	private Response parserJSON(String json) {

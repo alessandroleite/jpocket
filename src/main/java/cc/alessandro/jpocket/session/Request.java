@@ -10,8 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Request {
+public class Request implements Serializable{
 
+	/**
+	 * Serial code version <code>serialVersionUID</code> 
+	 */
+	private static final long serialVersionUID = 2541034963037622646L;
+	
 	private final Map<String, Type> parameters = new HashMap<String, Request.Type>();
 	private final List<Type> headers = new ArrayList<Request.Type>();
 
@@ -45,6 +50,14 @@ public class Request {
 		return this.addParam(type.name().toLowerCase(), value);
 	}
 
+	public void addParams(List<Type> params) {
+		if (params != null) {
+			for (Type param : params) {
+				this.addParam(param);
+			}
+		}
+	}
+
 	public Type removeParam(String name) {
 		return this.parameters.remove(name);
 	}
@@ -52,7 +65,7 @@ public class Request {
 	public Type removeParam(Type param) {
 		return this.removeParam(param.getName());
 	}
-	
+
 	public Type getParameter(String name) {
 		return this.parameters.get(name);
 	}
@@ -149,7 +162,8 @@ public class Request {
 
 		@Override
 		public String toString() {
-			return String.format("Name: %s, value: %s", this.getName(), this.getValue());
+			return String.format("Name: %s, value: %s", this.getName(),
+					this.getValue());
 		}
 	}
 }

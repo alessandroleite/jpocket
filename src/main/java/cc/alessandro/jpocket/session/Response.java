@@ -1,11 +1,19 @@
 package cc.alessandro.jpocket.session;
 
-public class Response {
+import java.io.Serializable;
+
+public class Response implements Serializable{
+	
+	/**
+	 * Serial code version <code>serialVersionUID</code> 
+	 */
+	private static final long serialVersionUID = 1293612143192917226L;
 	
 	private String code;
 	private String state;
 	private String accessToken;
 	private String username;
+	private String json;
 	/**
 	 * @return the code
 	 */
@@ -54,7 +62,16 @@ public class Response {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
-	
-
+	/**
+	 * @return the json
+	 */
+	public String getJson() {
+		return json;
+	}
+	/**
+	 * @param json the json to set
+	 */
+	public void setJson(String json) {
+		this.json = json;
+	}
 }
