@@ -22,6 +22,29 @@
  */
 package cc.alessandro.jpocket;
 
-public interface Images {
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
+public class Statuses implements Iterable<Status> {
+
+	private List<Status> list = new LinkedList<Status>();
+
+	@Override
+	public Iterator<Status> iterator() {
+		return this.get().iterator();
+	}
+
+	public Collection<Status> get() {
+		return Collections.unmodifiableList(list);
+	}
+
+	public boolean add(Status status) {
+		if (status != null) {
+			return this.list.add(status);
+		}
+		return false;
+	}
 }

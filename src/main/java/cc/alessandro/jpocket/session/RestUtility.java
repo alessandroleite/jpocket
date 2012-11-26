@@ -1,3 +1,25 @@
+/**
+ * Copyright (c) 2012 Alessandro Ferreira Leite, http://www.alessandro.cc/
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package cc.alessandro.jpocket.session;
 
 import java.io.IOException;
@@ -14,9 +36,8 @@ import org.apache.http.message.BasicNameValuePair;
 
 import cc.alessandro.jpocket.TypeData;
 import cc.alessandro.jpocket.exception.PocketException;
+import cc.alessandro.jpocket.gson.GsonFactory;
 import cc.alessandro.jpocket.session.Request.Type;
-
-import com.google.gson.Gson;
 
 public class RestUtility {
 
@@ -53,8 +74,7 @@ public class RestUtility {
 		}
 	}
 
-	protected String asString(HttpResponse response) throws PocketException,
-			IOException {
+	protected void asString(HttpResponse response, StringBuilder buffer) throws PocketException, IOException {
 
 		int status = response.getStatusLine().getStatusCode();
 
@@ -62,13 +82,10 @@ public class RestUtility {
 			throwExceptionBadRequest(response);
 		}
 
-		StringBuilder result = new StringBuilder();
-
 		HttpEntity ent = response.getEntity();
 		if (ent != null) {
-			result.append(IOUtils.toString(ent.getContent()));
+			buffer.append(IOUtils.toString(ent.getContent()));
 		}
-		return result.toString();
 	}
 
 	protected void throwExceptionBadRequest(HttpResponse response)
@@ -81,18 +98,26 @@ public class RestUtility {
 	}
 
 	public Response execute(Request request) throws IOException {
+		StringBuilder output = new StringBuilder();
+		
+		Response response = this.execute(request, Response.class, output);
+		response.setJson(output.toString());
+		
+		return response;
+	}
+
+
+	public <T> T execute(Request request, Class<T> jsonType)  throws IOException{
+		return this.execute(request, jsonType, new StringBuilder());
+	}
+	
+	protected <T> T execute (Request request, Class<T> jsonType, StringBuilder buffer) throws IOException{
 		request.sign();
 		
 		final HttpPost post = this.createHttpRequest(request);
 		HttpResponse response =  request.getSession().getHttpClient().execute(post);
-		String json = asString(response);
+		asString(response, buffer);
 		
-		Response resp = this.parserJSON(json);
-		resp.setJson(json);
-		return resp;
-	}
-
-	private Response parserJSON(String json) {
-		return new Gson().fromJson(json, Response.class);
+		return GsonFactory.parser(buffer.toString(), jsonType);
 	}
 }

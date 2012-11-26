@@ -20,8 +20,16 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package cc.alessandro.jpocket;
+import java.lang.management.ManagementFactory;
 
-public interface Images {
+
+public class Test {
+	
+	public static void main(String[] args) {
+		System.out.println(
+		ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage());
+	}
+	
+	
 
 }

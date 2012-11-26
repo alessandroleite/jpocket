@@ -20,8 +20,29 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package cc.alessandro.jpocket;
+package cc.alessandro.jpocket.gson;
 
-public interface Images {
+import cc.alessandro.jpocket.Status;
+import cc.alessandro.jpocket.Statuses;
+import cc.alessandro.jpocket.auth.AccessToken;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+public final class GsonFactory {
+	
+	private GsonFactory(){
+		throw new UnsupportedOperationException();
+	}
+
+	public static <T> T parser(String json, Class<T> type) {
+		Gson gson = new GsonBuilder()
+			.registerTypeAdapter(AccessToken.class,new AccessTokenDeserializer())
+			.registerTypeAdapter(Statuses.class, new StatusesDeserializer())
+			.registerTypeAdapter(Status.class, new StatusDeserializer())
+			.create();
+
+		return gson.fromJson(json, type);
+	}
 
 }

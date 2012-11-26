@@ -20,8 +20,24 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package cc.alessandro.jpocket;
+package cc.alessandro.jpocket.gson;
 
-public interface Images {
+import java.lang.reflect.Type;
 
+import cc.alessandro.jpocket.auth.AccessToken;
+
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
+public class AccessTokenDeserializer implements JsonDeserializer<AccessToken> {
+
+	@Override
+	public AccessToken deserialize(JsonElement json, Type typeOfT,
+			JsonDeserializationContext context) throws JsonParseException {
+		JsonObject jsonObject = (JsonObject) json;
+		return new AccessToken(jsonObject.get("access_token").getAsString(), jsonObject.get("username").getAsString());
+	}
 }

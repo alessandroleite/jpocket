@@ -1,3 +1,25 @@
+/**
+ * Copyright (c) 2012 Alessandro Ferreira Leite, http://www.alessandro.cc/
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package cc.alessandro.jpocket;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -5,7 +27,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.http.annotation.NotThreadSafe;
 
@@ -23,7 +44,7 @@ import cc.alessandro.jpocket.session.WebSession;
 @NotThreadSafe
 public class Pocket {
 
-	private final Session session;
+	private Session session;
 	private final String callbackURL;
 
 	public Pocket(String apiKey, String callbackURL) {
@@ -41,23 +62,35 @@ public class Pocket {
 		request.addParam(ParamType.REDIRECT_URI, callbackURL);
 
 		Response response = new RestUtility().execute(request);
-		return RequestToken.valueOf(response.getCode(), callbackURL, session);
+		RequestToken requestToken = RequestToken.valueOf(response.getCode(), callbackURL, session);
+		session.setRequestToken(requestToken);
+		
+		return requestToken;
 	}
 
 	/**
 	 * https://getpocket.com/v3/oauth/authorize
+	 * @param requestToken
+	 * @return The {@link AccessToken}
 	 */
-	public AccessToken authorized(String verifier) throws PocketException, IOException {
-		checkArgument(!isNullOrEmpty(verifier));
+	public AccessToken authorized(RequestToken requestToken) throws PocketException, IOException {
+		checkArgument(!isNullOrEmpty(checkNotNull(requestToken).getValue()));
+		this.synchronizeSession(requestToken);
 
 		Request request = new Request("/oauth/authorize", session);
-		request.addHeader("code", verifier);
+		request.addParam("code", requestToken.getValue());
 
-		Response response = new RestUtility().execute(request);
-		session.setAccessToken(new AccessToken(session.getRequestToken(), 
-				response.getAccessToken(), response.getUsername()));
+		AccessToken accessToken = new RestUtility().execute(request, AccessToken.class);
+		accessToken.setRequestToken(requestToken);
+		session.setAccessToken(accessToken);
 		
-		return session.getAccessToken();
+		return accessToken;
+	}
+
+	private void synchronizeSession(RequestToken requestToken) {
+		if (this.session != requestToken.getSession()) {
+			this.session = requestToken.getSession();
+		}
 	}
 
 	/**
@@ -73,7 +106,7 @@ public class Pocket {
 		assertThatIsLinked();
 	}
 	
-	public List<Status> get(Parameter filter) throws IOException {
+	public Statuses get(Parameter filter) throws IOException {
 		assertThatIsLinked();
 		
 		Request request = new Request("/get", session);
@@ -81,8 +114,7 @@ public class Pocket {
 			request.addParams(filter.asType());
 		}
 		
-		Response response = new RestUtility().execute(request);
-		return StatusFactory.parser(response);
+		return new RestUtility().execute(request, Statuses.class);
 	}
 
 	private void assertThatIsLinked() {

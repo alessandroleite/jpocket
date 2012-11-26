@@ -20,8 +20,32 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package cc.alessandro.jpocket;
+package cc.alessandro.jpocket.gson;
 
-public interface Images {
+import java.lang.reflect.Type;
 
+import cc.alessandro.jpocket.Status;
+import cc.alessandro.jpocket.Statuses;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+
+public class StatusesDeserializer implements JsonDeserializer<Statuses>{
+
+	@Override
+	public Statuses deserialize(JsonElement json, Type typeOfT,
+			JsonDeserializationContext context) throws JsonParseException {
+		
+		Statuses statuses = new Statuses();
+		
+		if (json instanceof JsonArray) {
+			for (JsonElement element : (JsonArray) json) {
+				statuses.add((Status) context.deserialize(element, Status.class));
+			}
+		}
+		return statuses;
+	}
 }
