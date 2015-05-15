@@ -34,6 +34,8 @@ import jpocket.State;
 import jpocket.Tag;
 import jpocket.session.Request.Type;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
 
 public class PocketParameter implements Parameter, ParameterBuilder
@@ -51,14 +53,14 @@ public class PocketParameter implements Parameter, ParameterBuilder
     private Integer offSet;
 
     @Override
-    public ParameterBuilder withState(State state)
+    public PocketParameter withState(State state)
     {
         this.state = state;
         return this;
     }
 
     @Override
-    public ParameterBuilder wasFavorited()
+    public PocketParameter wasFavorited()
     {
         this.favorite = true;
 
@@ -66,14 +68,14 @@ public class PocketParameter implements Parameter, ParameterBuilder
     }
 
     @Override
-    public ParameterBuilder withTags(Tag... tags)
+    public PocketParameter withTags(Tag... tags)
     {
         this.tags.addAll(Arrays.asList(tags));
         return this;
     }
 
     @Override
-    public ParameterBuilder sortedBy(Sort option)
+    public PocketParameter sortedBy(Sort option)
     {
         this.sort = option;
 
@@ -81,7 +83,7 @@ public class PocketParameter implements Parameter, ParameterBuilder
     }
 
     @Override
-    public ParameterBuilder withDetailType(DetailType detail)
+    public PocketParameter withDetailType(DetailType detail)
     {
         this.detailType = detail;
 
@@ -89,7 +91,7 @@ public class PocketParameter implements Parameter, ParameterBuilder
     }
 
     @Override
-    public ParameterBuilder withTitleOrUrlText(String search)
+    public PocketParameter withTitleOrUrlText(String search)
     {
         this.search = search;
 
@@ -97,28 +99,28 @@ public class PocketParameter implements Parameter, ParameterBuilder
     }
 
     @Override
-    public ParameterBuilder ofDomain(String domain)
+    public PocketParameter ofDomain(String domain)
     {
         this.domain = domain;
         return this;
     }
 
     @Override
-    public ParameterBuilder since(DateTime date)
+    public PocketParameter since(DateTime date)
     {
         this.since = date;
         return this;
     }
     
     @Override
-    public ParameterBuilder withContentType(ContentType type)
+    public PocketParameter withContentType(ContentType type)
     {
         this.contentType = type;
         return this;
     }
 
     @Override
-    public ParameterBuilder count()
+    public PocketParameter count()
     {
         return null;
     }
@@ -245,5 +247,11 @@ public class PocketParameter implements Parameter, ParameterBuilder
     public Integer getOffSet()
     {
         return offSet;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }
