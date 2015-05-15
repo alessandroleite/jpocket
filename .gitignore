@@ -8,3 +8,4 @@ tempLog
 .classpath
 .settings
 .project
+.checkstyle
