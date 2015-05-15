@@ -9,3 +9,6 @@ tempLog
 .settings
 .project
 .checkstyle
+
+
+src/test/resources/application.config
