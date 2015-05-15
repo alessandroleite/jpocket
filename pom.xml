@@ -50,7 +50,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.source.version>1.8</java.source.version>
+		<java.source.version>1.7</java.source.version>
 		<java.target.version>${java.source.version}</java.target.version>
 		<source.line.length>180</source.line.length>
 

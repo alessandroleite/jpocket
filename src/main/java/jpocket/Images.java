@@ -97,6 +97,7 @@ public class Images implements Iterable<Image>
     public Optional<Image> first()
     {
         final List<Image> images = get();
-        return images.isEmpty() ? Optional.absent() : Optional.of(images.get(1));
+
+        return images.isEmpty() ? Optional.<Image> absent() : Optional.of(images.get(1));
     }
 }

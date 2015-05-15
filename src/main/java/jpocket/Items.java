@@ -82,17 +82,17 @@ public class Items implements Iterable<Article>
     
     public synchronized Optional<Article> first()
     {
-        return isEmpty() ? Optional.absent() : get(0);
+        return isEmpty() ? Optional.<Article>absent() : get(0);
     }
     
     public synchronized Optional<Article> last()
     {
-        return isEmpty() ? Optional.absent() : get(size() - 1);
+        return isEmpty() ? Optional.<Article>absent() : get(size() - 1);
     }
     
     public synchronized Optional<Article> get(int index)
     {
-        return isEmpty() ? Optional.absent() : Optional.of(items.get(index));
+        return isEmpty() ? Optional.<Article>absent() : Optional.of(items.get(index));
     }
 
     /**

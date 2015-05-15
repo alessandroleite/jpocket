@@ -41,7 +41,7 @@ public class ApplicationDeserializer implements JsonDeserializer<Application>
         JsonObject obj = (JsonObject) json;
         final Application app= new Application();
         
-        app.setCredential(context.deserialize(obj.get("credential"), Credential.class))
+        app.setCredential((Credential) context.deserialize(obj.get("credential"), Credential.class))
            .setName(obj.get("name").getAsString())
            .setUrl(obj.get("callback-url").getAsString());
         

@@ -43,9 +43,9 @@ public class CredentialDeserializer implements JsonDeserializer<Credential>
         
         JsonObject obj = (JsonObject) json;
         
-        credential.setAccessToken(context.deserialize(obj.get("access-token"), AccessToken.class))
+        credential.setAccessToken((AccessToken) context.deserialize(obj.get("access-token"), AccessToken.class))
                   .setConsumerKey(obj.get("consumer-key").getAsString())
-                  .setRequestToken(context.deserialize(obj.get("request-token"), RequestToken.class));
+                  .setRequestToken((RequestToken) context.deserialize(obj.get("request-token"), RequestToken.class));
         
         return credential;
     }
